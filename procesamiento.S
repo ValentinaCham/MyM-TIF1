@@ -30,8 +30,14 @@ buscar_estudiante:
     ret
 
 ; --- Sección de Datos en Memoria de Programa (Flash) ---
-.section .progmem.data
+.section .progmem.data, "a"
+.align 1
 tabla_estudiantes:
-    .db "20260001", "Chambilla Perca, Valentin", 0, 0 ; Ejemplo de estructura
-    .db "20260002", "Llaja Apaza, Aarom", 0, 0
+    .ascii "20260001"
+    .asciz "Chambilla Perca, Valentin"
+    .byte 0, 0
+    
+    .ascii "20260002"
+    .asciz "Llaja Apaza, Aarom"
+    .byte 0, 0
     ; ... más datos ...
