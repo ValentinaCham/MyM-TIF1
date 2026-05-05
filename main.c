@@ -5,19 +5,22 @@
 
 #include "uart.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
 // Prototipo de la función en ensamblador (se definirá en procesamiento.S)
 extern void buscar_estudiante(uint32_t cui);
 
 void mostrar_menu(void) {
     uart_print("\n--- Sistema de Consulta Estudiantil ---\n");
-    uart_print("T: Test de comunicación\n");
+    uart_print("T: Test de comunicacion\n");
     uart_print("C: Consultar estudiante por CUI\n");
     uart_print("O: Otras opciones\n");
     uart_print("Seleccione una opcion: ");
 }
 
 int main(void) {
+    char cui_buffer[10]; // Buffer para CUI de 8-9 dígitos
+    
     // Inicializar UART a 9600 baudios
     uart_init(9600);
     
@@ -27,6 +30,10 @@ int main(void) {
         mostrar_menu();
         
         char opcion = uart_receive();
+        
+        // Ignorar saltos de línea y basura del terminal
+        if (opcion < 32) continue; 
+
         uart_transmit(opcion); // Echo de la opción seleccionada
         uart_print("\n");
 
@@ -39,8 +46,16 @@ int main(void) {
             case 'C':
             case 'c':
                 uart_print("Ingrese CUI: ");
-                // Aquí se implementará la lógica para leer el CUI y llamar a ASM
-                uart_print("[Proximamente: Lectura de CUI y busqueda en Flash]\n");
+                uart_read_line(cui_buffer, 10);
+                uart_print("\nBuscando CUI: ");
+                uart_print(cui_buffer);
+                uart_print("...\n");
+                
+                uint32_t cui_val = (uint32_t)atoll(cui_buffer);
+                // Aquí se llama a la función de ASM:
+                // buscar_estudiante(cui_val);
+                
+                uart_print("[Resultado: Funcion ASM lista para integracion]\n");
                 break;
                 
             case 'O':
@@ -49,7 +64,9 @@ int main(void) {
                 break;
 
             default:
-                uart_print("Opcion no valida.\n");
+                uart_print("Error: Opcion '");
+                uart_transmit(opcion);
+                uart_print("' no valida.\n");
                 break;
         }
     }

@@ -32,6 +32,14 @@ void uart_transmit(char data);
 char uart_receive(void);
 
 /**
+ * @brief Lee una línea de texto hasta encontrar un Enter (\n o \r).
+ * 
+ * @param buffer Puntero al arreglo donde se guardará el texto.
+ * @param max_len Tamaño máximo del buffer.
+ */
+void uart_read_line(char* buffer, uint8_t max_len);
+
+/**
  * @brief Transmite una cadena de texto (string) completa.
  * 
  * @param s Puntero a la cadena de texto.

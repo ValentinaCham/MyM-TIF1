@@ -52,6 +52,26 @@ char uart_receive(void) {
 #endif
 }
 
+void uart_read_line(char* buffer, uint8_t max_len) {
+    uint8_t i = 0;
+    char c;
+    while (i < max_len - 1) {
+        c = uart_receive();
+        if (c == '\r' || c == '\n') break; // Enter
+        
+        if (c == '\b' || c == 127) { // Backspace
+            if (i > 0) {
+                i--;
+                uart_print("\b \b"); // Borrar de la terminal
+            }
+        } else {
+            buffer[i++] = c;
+            uart_transmit(c); // Eco
+        }
+    }
+    buffer[i] = '\0'; // Fin de cadena
+}
+
 void uart_print(const char* s) {
     while (*s) {
         uart_transmit(*s++);
